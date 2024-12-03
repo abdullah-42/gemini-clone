@@ -7,12 +7,12 @@ const Main = () => {
         <div className="main">
             <div className="nav">
                 <p>Gemini</p>
-                <img src={assets.user_icon} alt="" />
+                <img src={assets.profil} alt="" />
             </div>
             <div className="main-content">
                 <div className="greet">
                     <p><span>Hallo, Dev.</span></p>
-                    <p>Wie kann ich dir heute Helfen?</p>
+                    <p>Wie kann ich Ihnen heute helfen?</p>
                 </div>
                 <div className="cards">
                     <div className="card">
@@ -31,6 +31,20 @@ const Main = () => {
                     <div className="card">
                         <p>Welche lokalen Spezialitäten sollte ich in Rom probieren?</p>
                         <img src={assets.compass_icon} alt="" />
+                    </div>
+                </div>
+
+                <div className="main-bottom">
+                    <div className="search-box">
+                        <input type="text" placeholder='Gemini fragen' />
+                        <div>
+                            <img src={assets.gallery_icon} alt="" />
+                            <img src={assets.mic_icon} alt="" />
+                            <img src={assets.send_icon} alt="" />
+                        </div>
+                    </div>
+                    <div className="bottom-info">
+                        <p>Gemini kann fehlerhafte Aussagen liefern, auch über Personen, also überprüfe die Antworten. Datenschutz und Gemini</p>
                     </div>
                 </div>
             </div>

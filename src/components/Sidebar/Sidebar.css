@@ -64,11 +64,13 @@
     border-radius: 50px;
     color: #282828;
     cursor: pointer;
+    white-space: nowrap;
 }
 
 .sidebar .recent-entry:hover {
     background-color: #e2e6eb;
 }
+
 
 .sidebar .bottom {
     display: flex;
