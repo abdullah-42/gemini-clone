@@ -1,14 +1,13 @@
-require('dotenv').config();
-
-console.log("API Key:", apiKey);
-
-const {
+import {
     GoogleGenerativeAI,
     HarmCategory,
     HarmBlockThreshold,
-} = require("@google/generative-ai");
+} from "@google/generative-ai"
 
-const apiKey = process.env.REACT_APP_GEMINI_API_KEY;
+const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+console.log("API Key:", apiKey);
+
+
 
 const genAI = new GoogleGenerativeAI(apiKey);
 
@@ -35,4 +34,4 @@ async function run(prompt) {
     console.log(result.response.text());
 }
 
-export default run;
+export default run; 
