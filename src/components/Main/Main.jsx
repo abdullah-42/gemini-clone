@@ -7,6 +7,7 @@ const Main = () => {
 
     const { onSent, recentPrompt, setShowResult, showResult, loading, resultData, setInput, input, handleKeyDown } = useContext(Context)
 
+
     return (
         <div className="main">
             <div className="nav">
@@ -48,20 +49,19 @@ const Main = () => {
                             <p>Wie kann ich Ihnen heute helfen?</p>
                         </div>
                         <div className="cards">
-                            <div className="card">
+                            <div className="card" >
                                 <p>Schreib ein Gedicht über die Schönheit eines Sonnenuntergangs.</p>
                                 <img src={assets.bulb_icon} alt="" />
                             </div>
-
-                            <div className="card">
+                            <div onClick={(() => onSent())} className="card">
                                 <p>Finde so viele Wörter wie möglich, die mit dem Buchstaben "B" beginnen und mit "L" enden.</p>
                                 <img src={assets.message_icon} alt="" />
                             </div>
-                            <div className="card">
+                            <div onClick={(() => onSent())} className="card">
                                 <p>Erklär mir den Unterschied zwischen React und Angular.</p>
                                 <img src={assets.code_icon} alt="" />
                             </div>
-                            <div className="card">
+                            <div onClick={(() => onSent())} className="card">
                                 <p>Welche lokalen Spezialitäten sollte ich in Rom probieren?</p>
                                 <img src={assets.compass_icon} alt="" />
                             </div>
@@ -84,7 +84,7 @@ const Main = () => {
                 </div>
             </div>
 
-        </div>
+        </div >
     )
 }
 
