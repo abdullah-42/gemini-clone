@@ -4,7 +4,10 @@ import run from "../config/gemini";
 export const Context = createContext();
 
 const ContextProvider = (props) => {
-
+    const [chatBox, setChatBox] = useState([
+        { id: 1, dialog: [] }
+    ]);
+    const [chatIndex, setChatIndex] = useState(1)
     const [input, setInput] = useState(""); // Benutzer-Eingabe
     const [recentPrompt, setRecentPrompt] = useState(""); // Letzter Prompt
     const [prevPrompts, setPrevPrompts] = useState([]); // Verlauf aller Prompts und Antworten
@@ -19,26 +22,130 @@ const ContextProvider = (props) => {
         }
     };
 
+    // Funktion, die Dialoge einer bestimmten ID zurückgibt
+    const getDialogById = (id) => {
+        const chat = chatBox.find((item) => item.id === id); // Suche nach dem Eintrag mit der passenden ID
+        return chat ? chat.dialog : []; // Wenn gefunden, gib die Dialoge zurück, ansonsten ein leeres Array
+    };
+
+    const addDialogToId = (id, newPrompt) => {
+        setChatBox((prevChatBox) =>
+            prevChatBox.map((item) =>
+                item.id === id
+                    ? { ...item, dialog: [...item.dialog, newPrompt] } // Dialog für die passende ID erweitern
+                    : item // Unveränderte Elemente zurückgeben
+            )
+        );
+    };
+
+    // const onSent = async () => {
+    //     if (!input) return; // Keine leeren Prompts senden
+    //     // setRecentPrompt(input);
+    //     setLoading(true);
+    //     setShowResult(true);
+
+    //     // Neuen Prompt zum Verlauf hinzufügen (ohne Antwort)
+    //     const newPrompt = { prompt: input, response: null };
+    //     // const updatedPrompts = [...prevPrompts, newPrompt];
+    //     // setPrevPrompts(updatedPrompts);
+
+    //     // setChatBox(prevState => {
+    //     //     const existingChat = prevState.find(chat => chat.id === chatIndex);
+    //     //     if (existingChat) {
+    //     //         // Chat mit der gleichen ID existiert bereits, aktualisiere ihn
+    //     //         return prevState.map(chat =>
+    //     //             chat.id === chatIndex ? { ...chat, dialog: newPrompt } : chat
+    //     //         );
+    //     //     }
+    //     // });
+
+    //     addDialogToId(chatIndex, newPrompt)
+
+    //     // Kombiniere alle bisherigen Prompts und Antworten als Kontext
+    //     const context = getDialogById(chatIndex)
+    //         .map((item) => `User: ${item.prompt}\nAI: ${item.response || ""}`)
+    //         .join("\n");
+
+    //     try {
+    //         const result = await run(context); // Kontext an KI senden
+
+    //         // Formatierung von Markdown und Code-Snippets in HTML
+    //         const formattedResult = result
+    //             .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>") // Fettgedruckter Text
+    //             .replace(/\*(.*?)\*/g, "<i>$1</i>") // Kursiver Text
+    //             .replace(/\n/g, "<br>") // Neue Zeilen
+    //             .replace(/^\* (.*?)$/gm, "<li>$1</li>") // Listenpunkte
+    //             .replace(/<li>(.*?)<\/li>/g, "<ul><li>$1</li></ul>") // Liste umschließen
+    //             .replace(/```(.*?)```/gs, "<pre><code>$1</code></pre>") // Code-Snippets
+    //             .replace(/\*/g, ""); // Entferne übriggebliebene Sternchen
+
+    //         // Antwort zum Verlauf hinzufügen
+    //         setChatBox((prevChatBox) =>
+    //             prevChatBox.map((item) =>
+    //                 item.id === chatIndex
+    //                     ? {
+    //                         ...item,
+    //                         dialog: item.dialog.map((dialogItem, index) =>
+    //                             index === item.dialog.length - 1
+    //                                 ? { ...dialogItem, response: result } // Füge die Antwort zum letzten Dialog hinzu
+    //                                 : dialogItem
+    //                         ),
+    //                     }
+    //                     : item
+    //             )
+    //         );
+
+    //         // setPrevPrompts(finalPrompts); // Verlauf aktualisieren
+
+    //         // setChatBox(prevState => {
+    //         //     const existingChat = prevState.find(chat => chat.id === chatIndex);
+    //         //     if (existingChat) {
+    //         //         // Chat mit der gleichen ID existiert bereits, aktualisiere ihn
+    //         //         return prevState.map(chat =>
+    //         //             chat.id === chatIndex ? { ...chat, dialog: finalPrompts } : chat
+    //         //         );
+    //         //     }
+    //         // });
+
+
+    //         setResultData(formattedResult); // Formatierte Antwort speichern
+    //         // console.log(finalPrompts);
+    //         console.log(chatBox);
+    //     } catch (error) {
+    //         console.error("Error fetching AI response:", error);
+    //         setResultData("Es ist ein Fehler aufgetreten."); // Fehlermeldung anzeigen
+    //     }
+
+    //     setLoading(false);
+    //     setInput(""); // Eingabefeld zurücksetzen
+    // };
+
     const onSent = async () => {
         if (!input) return; // Keine leeren Prompts senden
         setRecentPrompt(input);
         setLoading(true);
         setShowResult(true);
 
-        // Neuen Prompt zum Verlauf hinzufügen (ohne Antwort)
         const newPrompt = { prompt: input, response: null };
-        const updatedPrompts = [...prevPrompts, newPrompt];
-        setPrevPrompts(updatedPrompts);
 
-        // Kombiniere alle bisherigen Prompts und Antworten als Kontext
-        const context = updatedPrompts
-            .map((item) => `User: ${item.prompt}\nAI: ${item.response || ""}`)
+        // Prompt sofort zur passenden Chat-ID hinzufügen
+        const updatedChatBox = chatBox.map((item) =>
+            item.id === chatIndex
+                ? { ...item, dialog: [...item.dialog, newPrompt] }
+                : item
+        );
+
+        setChatBox(updatedChatBox); // Zustand aktualisieren
+
+        // Kontext für die Anfrage vorbereiten
+        const context = updatedChatBox
+            .find((item) => item.id === chatIndex)
+            ?.dialog.map((item) => `User: ${item.prompt}\nAI: ${item.response || ""}`)
             .join("\n");
 
         try {
-            const result = await run(context); // Kontext an KI senden
-
-            // Formatierung von Markdown und Code-Snippets in HTML
+            // KI-Antwort abrufen
+            const result = await run(context);
             const formattedResult = result
                 .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>") // Fettgedruckter Text
                 .replace(/\*(.*?)\*/g, "<i>$1</i>") // Kursiver Text
@@ -48,23 +155,33 @@ const ContextProvider = (props) => {
                 .replace(/```(.*?)```/gs, "<pre><code>$1</code></pre>") // Code-Snippets
                 .replace(/\*/g, ""); // Entferne übriggebliebene Sternchen
 
-            // Antwort zum Verlauf hinzufügen
-            const finalPrompts = updatedPrompts.map((item, index) =>
-                index === updatedPrompts.length - 1
-                    ? { ...item, response: result }
-                    : item
+            // Dialog des aktuellen Chats aktualisieren
+            setChatBox((prevChatBox) =>
+                prevChatBox.map((item) =>
+                    item.id === chatIndex
+                        ? {
+                            ...item,
+                            dialog: item.dialog.map((dialogItem, index) =>
+                                index === item.dialog.length - 1
+                                    ? { ...dialogItem, response: result }
+                                    : dialogItem
+                            ),
+                        }
+                        : item
+                )
             );
-            setPrevPrompts(finalPrompts); // Verlauf aktualisieren
+
             setResultData(formattedResult); // Formatierte Antwort speichern
-            console.log(finalPrompts)
         } catch (error) {
             console.error("Error fetching AI response:", error);
-            setResultData("Es ist ein Fehler aufgetreten."); // Fehlermeldung anzeigen
+            setResultData("Es ist ein Fehler aufgetreten.");
         }
 
         setLoading(false);
         setInput(""); // Eingabefeld zurücksetzen
+        console.log(chatBox)
     };
+
 
     const prevChat = (index) => {
         setShowResult(true);
@@ -81,8 +198,8 @@ const ContextProvider = (props) => {
             .replace(/```(.*?)```/gs, "<pre><code>$1</code></pre>") // Code-Snippets
             .replace(/\*/g, ""); // Entferne übriggebliebene Sternchen
 
-        setResultData(formattedResult)
-    }
+        setResultData(formattedResult);
+    };
 
     const contextValue = {
         prevPrompts, // Verlauf aller Prompts und Antworten
@@ -97,7 +214,11 @@ const ContextProvider = (props) => {
         input,
         setInput,
         handleKeyDown,
-        prevChat
+        prevChat,
+        setChatBox,
+        chatBox,
+        setChatIndex,
+        chatIndex
     };
 
     return (
@@ -108,3 +229,5 @@ const ContextProvider = (props) => {
 };
 
 export default ContextProvider;
+
+
