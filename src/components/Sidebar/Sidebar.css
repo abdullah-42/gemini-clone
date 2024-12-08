@@ -45,6 +45,10 @@
     transition: opacity 0.3s ease;
 }
 
+.sidebar .new-chat:hover {
+    background-color: #e2e6eb;
+}
+
 .sidebar .recent {
     display: flex;
     flex-direction: column;
@@ -88,4 +92,21 @@
     overflow: hidden;
     text-overflow: ellipsis;
     display: block;
+}
+
+/* ------------------------------- Chatverlauf */
+
+.chat-dropdowns {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    margin: 30px 0;
+    padding: 10px;
+    max-height: 57vh;
+    overflow-y: scroll;
+}
+
+.chat-dropdowns::-webkit-scrollbar {
+    display: none;
+    /* Verstecke die Scrollbar */
 }

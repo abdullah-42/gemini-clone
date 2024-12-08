@@ -74,8 +74,8 @@ const Main = () => {
                 <div className="search-box">
                     <input onChange={(e) => setInput(e.target.value)} value={input} onKeyDown={handleKeyDown} type="text" placeholder='Gemini fragen' />
                     <div>
-                        <img src={assets.gallery_icon} alt="" />
-                        <img src={assets.mic_icon} alt="" />
+                        <img onClick={() => alert(" This feature is coming soon")} src={assets.gallery_icon} alt="" />
+                        <img onClick={() => alert(" This feature is coming soon")} src={assets.mic_icon} alt="" />
                         <img onClick={(() => onSent())} src={assets.send_icon} alt="" />
                     </div>
                 </div>

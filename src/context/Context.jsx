@@ -22,22 +22,6 @@ const ContextProvider = (props) => {
         }
     };
 
-    // Funktion, die Dialoge einer bestimmten ID zurückgibt
-    const getDialogById = (id) => {
-        const chat = chatBox.find((item) => item.id === id); // Suche nach dem Eintrag mit der passenden ID
-        return chat ? chat.dialog : []; // Wenn gefunden, gib die Dialoge zurück, ansonsten ein leeres Array
-    };
-
-    const addDialogToId = (id, newPrompt) => {
-        setChatBox((prevChatBox) =>
-            prevChatBox.map((item) =>
-                item.id === id
-                    ? { ...item, dialog: [...item.dialog, newPrompt] } // Dialog für die passende ID erweitern
-                    : item // Unveränderte Elemente zurückgeben
-            )
-        );
-    };
-
     // const onSent = async () => {
     //     if (!input) return; // Keine leeren Prompts senden
     //     // setRecentPrompt(input);
@@ -179,15 +163,22 @@ const ContextProvider = (props) => {
 
         setLoading(false);
         setInput(""); // Eingabefeld zurücksetzen
+        console.log(chatBox.length)
+        console.log(chatBox.find((item) => item.id === chatIndex)?.dialog.length);
         console.log(chatBox)
     };
 
 
-    const prevChat = (index) => {
+    const prevChat = (DialogIndex) => {
         setShowResult(true);
-        setRecentPrompt(prevPrompts[index].prompt);
 
-        const result = prevPrompts[index].response;
+        const matchingChat = chatBox.find((item) => item.id === chatIndex); // Finde den Chat mit der aktuellen ID
+        const specificPrompt = matchingChat.dialog[DialogIndex]?.prompt;
+        setRecentPrompt(specificPrompt);
+
+        const specificResponse = matchingChat.dialog[DialogIndex]?.response;
+
+        const result = specificResponse;
 
         const formattedResult = result
             .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>") // Fettgedruckter Text
@@ -218,7 +209,7 @@ const ContextProvider = (props) => {
         setChatBox,
         chatBox,
         setChatIndex,
-        chatIndex
+        chatIndex,
     };
 
     return (

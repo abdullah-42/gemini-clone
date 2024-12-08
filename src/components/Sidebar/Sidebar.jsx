@@ -1,36 +1,26 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import "./Sidebar.css";
 import { assets } from "../../assets/assets";
 import { Context } from "../../context/Context";
 import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 
 const Sidebar = () => {
-    const { prevPrompts, prevChat, setChatBox, setChatIndex, chatIndex } = useContext(Context);
-
+    const { chatBox, setChatBox, setChatIndex, chatIndex, setShowResult, prevChat } = useContext(Context);
     const [extended, setExtended] = useState(false);
-    const [selectedPrompt, setSelectedPrompt] = useState("");
 
-    useEffect(() => {
-        if (prevPrompts.length > 0) {
-            setSelectedPrompt(prevPrompts[0].prompt);
-        } else {
-            setSelectedPrompt("");
-        }
-    }, [prevPrompts]); // Immer wenn prevPrompts sich ändern, wird dieser Effekt ausgelöst
-
-    const handleSelectChange = (e) => {
-        const selectedIndex = prevPrompts.findIndex((item) => item.prompt === e.target.value);
-        setSelectedPrompt(e.target.value);
-        prevChat(selectedIndex);
-    };
-
+    // Funktion, um einen neuen Chat zu erstellen
     const addNewChat = () => {
-        const newChat = { id: chatIndex + 1, dialog: [] };
-        setChatIndex(chatIndex + 1);
-        // Zustand aktualisieren: Neuen Chat hinzufügen und den Zähler erhöhen
+        const newChat = { id: chatBox.length + 1, dialog: [] }; // ID = Länge von chatBox + 1
         setChatBox((prevChatBox) => [...prevChatBox, newChat]);
+        setChatIndex(chatBox.length + 1); // Setze den Index auf den neue erstellten Chat
+        setShowResult(false)
     };
 
+    // Wenn ein Dropdown geändert wird, wechsle zum entsprechenden Chat
+    const handleChatChange = (chatId, selectedPrompt) => {
+        setChatIndex(chatId); // Setze den aktiven Chat
+        console.log(`Wechsel zu Chat ID ${chatId}, Prompt: ${selectedPrompt}`);
+    };
 
     return (
         <div className={`sidebar ${extended ? "extended" : ""}`}>
@@ -39,43 +29,52 @@ const Sidebar = () => {
                     className="menu"
                     onClick={() => setExtended((prev) => !prev)}
                     src={assets.menu_icon}
-                    alt=""
+                    alt="menu icon"
                 />
-                <div onClick={() => addNewChat()} className="new-chat">
-                    <img src={assets.plus_icon} alt="" />
+                <div onClick={addNewChat} className="new-chat">
+                    <img src={assets.plus_icon} alt="add icon" />
                     {extended && <p>Neuer Chat</p>}
                 </div>
 
-                {extended && (
-                    <div className="recent">
-                        <p className="recent-title">Chatverlauf</p>
 
-                        {/* Dropdown für den Chatverlauf */}
-                        <FormControl fullWidth>
-                            <InputLabel id="chat-select-label">Verlauf</InputLabel>
-                            <Select
-                                labelId="chat-select-label"
-                                value={selectedPrompt}
-                                onChange={handleSelectChange}
-                                label="Verlauf"
-                            >
-                                {prevPrompts.length === 0 ? (
-                                    <MenuItem value="">
-                                        <p>Kein Verlauf</p>
-                                    </MenuItem>
-                                ) : (
-                                    prevPrompts.map((item, index) => (
-                                        <MenuItem key={index} value={item.prompt}>
-                                            {item.prompt.length > 30
-                                                ? `${item.prompt.substring(0, 30)}...`
-                                                : item.prompt}
-                                        </MenuItem>
-                                    ))
-                                )}
-                            </Select>
-                        </FormControl>
+                {/* Chat-Dropdowns */ extended &&
+                    <div className="chat-dropdowns">
+                        {chatBox.map((chat) => (
+                            <div key={chat.id} className="chat-dropdown">
+                                <FormControl fullWidth>
+                                    <InputLabel id={`chat-select-label-${chat.id}`}>
+                                        Chat {chat.id}
+                                    </InputLabel>
+                                    <Select
+                                        labelId={`chat-select-label-${chat.id}`}
+                                        value=""
+                                        onChange={(e) => handleChatChange(chat.id, e.target.value)}
+                                        label={`Chat ${chat.id} Verlauf`}
+                                    >
+                                        {chat.dialog.length === 0 ? (
+                                            <MenuItem value="">
+                                                <p>Kein Verlauf</p>
+                                            </MenuItem>
+                                        ) : (
+                                            chat.dialog.map((dialogItem, dialogIndex) => (
+                                                <MenuItem
+                                                    key={`${chat.id}-${dialogIndex}`}
+                                                    value={dialogItem.prompt}
+                                                    onClick={() => prevChat(dialogIndex)}
+                                                >
+                                                    {`${dialogItem.prompt.substring(0, 20)}...`}
+
+
+                                                </MenuItem>
+                                            ))
+                                        )}
+                                    </Select>
+                                </FormControl>
+                            </div>
+                        ))}
                     </div>
-                )}
+                }
+
             </div>
 
             <div className="bottom">
@@ -97,4 +96,3 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
-
