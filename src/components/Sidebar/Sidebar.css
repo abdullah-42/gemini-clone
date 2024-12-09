@@ -104,9 +104,14 @@
     padding: 10px;
     max-height: 57vh;
     overflow-y: scroll;
+    transition: background-color 0.3s ease;
 }
 
 .chat-dropdowns::-webkit-scrollbar {
     display: none;
-    /* Verstecke die Scrollbar */
+}
+
+.chat-dropdown.active-chat {
+    background-color: #dbf5dd;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
 }

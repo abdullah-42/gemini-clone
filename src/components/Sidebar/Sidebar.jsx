@@ -17,9 +17,8 @@ const Sidebar = () => {
     };
 
     // Wenn ein Dropdown geändert wird, wechsle zum entsprechenden Chat
-    const handleChatChange = (chatId, selectedPrompt) => {
-        setChatIndex(chatId); // Setze den aktiven Chat
-        console.log(`Wechsel zu Chat ID ${chatId}, Prompt: ${selectedPrompt}`);
+    const handleChatChange = (chatId) => {
+        setChatIndex(chatId);
     };
 
     return (
@@ -40,7 +39,9 @@ const Sidebar = () => {
                 {/* Chat-Dropdowns */ extended &&
                     <div className="chat-dropdowns">
                         {chatBox.map((chat) => (
-                            <div key={chat.id} className="chat-dropdown">
+                            <div key={chat.id} className={`chat-dropdown 
+                                ${chat.id === chatIndex ? "active-chat" : ""
+                                }`}>
                                 <FormControl fullWidth>
                                     <InputLabel id={`chat-select-label-${chat.id}`}>
                                         Chat {chat.id}
@@ -48,12 +49,12 @@ const Sidebar = () => {
                                     <Select
                                         labelId={`chat-select-label-${chat.id}`}
                                         value=""
-                                        onChange={(e) => handleChatChange(chat.id, e.target.value)}
+                                        onChange={(e) => handleChatChange(chat.id)}
                                         label={`Chat ${chat.id} Verlauf`}
                                     >
                                         {chat.dialog.length === 0 ? (
-                                            <MenuItem value="">
-                                                <p>Kein Verlauf</p>
+                                            <MenuItem onClick={() => handleChatChange(chat.id)} value="">
+                                                <p>Chat Starten!</p>
                                             </MenuItem>
                                         ) : (
                                             chat.dialog.map((dialogItem, dialogIndex) => (
@@ -62,9 +63,7 @@ const Sidebar = () => {
                                                     value={dialogItem.prompt}
                                                     onClick={() => prevChat(dialogIndex)}
                                                 >
-                                                    {`${dialogItem.prompt.substring(0, 20)}...`}
-
-
+                                                    {`${dialogItem.prompt.substring(0, 20)} ...`}
                                                 </MenuItem>
                                             ))
                                         )}

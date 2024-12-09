@@ -21,8 +21,6 @@ const ContextProvider = (props) => {
             onSent();
         }
     };
-
-    // const onSent = async () => {
     //     if (!input) return; // Keine leeren Prompts senden
     //     // setRecentPrompt(input);
     //     setLoading(true);
@@ -104,13 +102,17 @@ const ContextProvider = (props) => {
     //     setInput(""); // Eingabefeld zurücksetzen
     // };
 
-    const onSent = async () => {
-        if (!input) return; // Keine leeren Prompts senden
-        setRecentPrompt(input);
+    const onSent = async (customInput = "") => {
+
+        const inputToUse = customInput || input;
+
+        if (!inputToUse) return;
+
+        setRecentPrompt(inputToUse);
         setLoading(true);
         setShowResult(true);
 
-        const newPrompt = { prompt: input, response: null };
+        const newPrompt = { prompt: inputToUse, response: null };
 
         // Prompt sofort zur passenden Chat-ID hinzufügen
         const updatedChatBox = chatBox.map((item) =>

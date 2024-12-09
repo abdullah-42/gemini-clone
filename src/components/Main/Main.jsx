@@ -5,7 +5,7 @@ import { Context } from '../../context/Context'
 
 const Main = () => {
 
-    const { onSent, recentPrompt, setShowResult, showResult, loading, resultData, setInput, input, handleKeyDown } = useContext(Context)
+    const { onSent, recentPrompt, setShowResult, showResult, loading, resultData, setInput, input, handleKeyDown, chatIndex } = useContext(Context)
 
 
     return (
@@ -45,23 +45,23 @@ const Main = () => {
                 <>
                     <div className="main-content">
                         <div className="greet">
-                            <p><span>Hallo, Dev.</span></p>
+                            <p><span>Chat {chatIndex}</span></p>
                             <p>Wie kann ich Ihnen heute helfen?</p>
                         </div>
                         <div className="cards">
-                            <div className="card" >
+                            <div onClick={(() => onSent("Schreib ein Gedicht über die Schönheit eines Sonnenuntergangs."))} className="card" >
                                 <p>Schreib ein Gedicht über die Schönheit eines Sonnenuntergangs.</p>
                                 <img src={assets.bulb_icon} alt="" />
                             </div>
-                            <div onClick={(() => onSent())} className="card">
+                            <div onClick={(() => onSent("Finde so viele Wörter wie möglich, die mit dem Buchstaben B beginnen und mit L enden."))} className="card">
                                 <p>Finde so viele Wörter wie möglich, die mit dem Buchstaben "B" beginnen und mit "L" enden.</p>
                                 <img src={assets.message_icon} alt="" />
                             </div>
-                            <div onClick={(() => onSent())} className="card">
+                            <div onClick={(() => onSent("Erklär mir den Unterschied zwischen React und Angular."))} className="card">
                                 <p>Erklär mir den Unterschied zwischen React und Angular.</p>
                                 <img src={assets.code_icon} alt="" />
                             </div>
-                            <div onClick={(() => onSent())} className="card">
+                            <div onClick={(() => onSent("Welche lokalen Spezialitäten sollte ich in Rom probieren?"))} className="card">
                                 <p>Welche lokalen Spezialitäten sollte ich in Rom probieren?</p>
                                 <img src={assets.compass_icon} alt="" />
                             </div>
